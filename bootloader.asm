@@ -17,9 +17,9 @@ main:
     mov dl, 0x00    ; Drive 0 (First Floppy Disk)
     
     ; Load kernel at address es:bx
-    mov bx, [kernel_segment_offset]
+    mov bx, KERNEL_OFFSET
     mov es, bx
-    mov bx, [kernel_address]
+    mov bx, KERNEL_ADDRESS
     
     ; Read from the floppy
     int 0x13
@@ -29,7 +29,7 @@ main:
     jne drive_read_error
     
     ; Jump to the kernel
-    jmp 0x0000:0x8100
+    jmp KERNEL_OFFSET:KERNEL_ADDRESS
     
 drive_read_error:
     mov bx, error_msg
@@ -57,8 +57,8 @@ loading_msg db "Loading OS...", 0x0D, 0x0A, 0x00
 error_msg db "ERROR - Did not load OS successfully!", 0x00
 
 ; Address of where the kernel will be loaded
-kernel_segment_offset dw 0x0000
-kernel_address dw 0x8100
+KERNEL_OFFSET equ 0x0000
+KERNEL_ADDRESS equ 0x8100
 
 ; Fill with zeroes and place the magic number (0xAA55) at the end
 times 510-($-$$) db 0
