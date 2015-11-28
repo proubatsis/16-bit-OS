@@ -27,3 +27,42 @@ print_string:
         pop bp
         ret
     
+;input(char* buffer) -> Returns nothing
+;keyboard input stored in the given buffer
+input:
+    ; Set up stack frame
+    push bp
+    mov bp, sp
+    
+    pusha ; Save all registers
+    
+    mov bx, [bp + 4] ; Get the start of the buffer
+    
+    .loop:
+        mov ah, 0x00 ; Keyboard character input function for int 0x16
+        int 0x16
+        
+        ; Print what was typed
+        mov ah, 0x0E
+        int 0x10
+        
+        cmp al, 0x0D ; Check for carriage return
+        je .done
+        
+        mov [bx], al ; Store the character in the buffer
+        inc bx       ; Move to the next address in the buffer
+
+        jmp .loop
+    
+    .done:
+    	mov ah, 0x0E     ; Print new line
+    	mov al, 0x0A
+    	int 0x10
+    	
+        mov [bx], byte 0 ; End of string
+        popa             ; Restore all registers
+        
+        mov sp, bp
+        pop bp
+        ret
+        
