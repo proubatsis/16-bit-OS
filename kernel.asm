@@ -10,6 +10,6 @@ main:
     
     jmp $
     
-%include 'kernel/io.asm'
+%include 'kernel/std_io.asm'
     
 hello_world: db "Hello, World", 0

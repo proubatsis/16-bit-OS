@@ -21,7 +21,7 @@ print_string:
         jmp .loop
     
     .done:
-        pop bx ; Restore all registers
+        popa          ; Restore all registers
         
         mov sp, bp
         pop bp
