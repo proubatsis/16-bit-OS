@@ -2,7 +2,7 @@
 [org 0x8100]
 
 main:
-    mov bp, 0x9000
+    mov bp, 0x8900
     mov sp, bp
     
     push password_message
