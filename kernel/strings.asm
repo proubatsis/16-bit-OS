@@ -39,3 +39,32 @@ compare_strings:
         
         ret
 
+; get_length(char*)
+; Return (in ax) the length of the string (iterations until null).
+get_length:
+    push bp
+    mov bp, sp
+
+    push bx          ; bx and dx will be modified, save them.
+    
+    mov bx, [bp + 4] ; Address of first char
+    mov ax, 0        ; Length counter
+    
+    .loop:
+        mov dx, [bx]
+        
+        cmp dx, 0    ; End of string?
+        je .done
+        
+        inc ax       ; increment char count (length)
+        inc bx       ; goto next char
+        jmp .loop
+        
+    .done:
+        pop bx       ; restore bx and dx
+        pop dx
+        
+        mov sp, bp
+        pop bp
+        ret
+        
