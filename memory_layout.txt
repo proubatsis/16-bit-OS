@@ -1,5 +1,6 @@
 item, address, size (bytes)
 bootloader, 0x7c00, 512
 kernel, 0x8100, 512
-stack, 0x8900, 2048
+stack, 0x8900 (Downwards), 2048
+file_table, 0x8A00, 512
 

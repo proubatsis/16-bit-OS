@@ -24,3 +24,23 @@ read_floppy:
     pop bp
     ret
 
+; load_file_table(byte sector)
+; Load the file table from the given sector
+; of the floppy into memory adress 0x8A00.
+load_file_table:
+    push bp
+    mov bp, sp
+    
+    push word 1        ; Read 1 sector
+    push word [bp + 4] ; Read the given sector
+    push word file_table_offset
+    push word file_table_segment
+    call read_floppy
+    
+    mov sp, bp
+    pop bp
+    ret
+    
+file_table_segment equ 0x0000
+file_table_offset equ 0x8A00
+

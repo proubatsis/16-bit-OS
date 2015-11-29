@@ -5,40 +5,24 @@ main:
     mov bp, 0x8900
     mov sp, bp
     
-    push password_message
+    push welcome_message
     call print_string
     
-    push input_buffer
-    call input
+    push word file_table_sector
+    call load_file_table
     
-    push password
-    push input_buffer
-    call compare_strings
-    
-    cmp ax, 0
-    je grant_access
-    jmp deny_access
-    
-    jmp $
-    
-grant_access:
-    push access_granted
+    push word file_table_offset
     call print_string
-    jmp $
     
-deny_access:
-    push access_denied
-    call print_string
     jmp $
     
 %include 'kernel/std_io.asm'
 %include 'kernel/file_io.asm'
 %include 'kernel/strings.asm'
 
-password: db "monkeys", 0
-password_message: db "Enter the password: ", 0
-access_granted: db "Access Granted!", 0
-access_denied: db "Access Denied...", 0
+welcome_message db "Welcome to my OS!", 0x0D, 0x0A, 0x00
 
 file_input: times 32 db 0
 input_buffer: times 32 db 0
+
+file_table_sector equ 3
