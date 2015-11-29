@@ -1,16 +1,19 @@
-os.img: build_path bootloader.bin kernel.bin
-	dd if=/dev/zero of=build/os.img bs=512 count=2880
-	dd if=build/bootloader.bin of=build/os.img conv=notrunc
-	dd if=build/kernel.bin of=build/os.img conv=notrunc bs=512 seek=1
-
-bootloader.bin:
-	nasm -f bin -o build/bootloader.bin bootloader.asm
-	
-kernel.bin:
-	nasm -f bin -o build/kernel.bin kernel.asm
-	
-build_path:
+all: os.img
 	mkdir build
+	mv os.img build/os.img
+	mv bootloader.bin build/bootloader.bin
+	mv kernel.bin build/kernel.bin
+
+os.img: bootloader.bin kernel.bin
+	dd if=/dev/zero of=os.img bs=512 count=2880
+	dd if=bootloader.bin of=os.img conv=notrunc
+	dd if=kernel.bin of=os.img conv=notrunc bs=512 seek=1
+
+bootloader.bin: bootloader.asm
+	nasm -f bin -o bootloader.bin bootloader.asm
+	
+kernel.bin: kernel.asm kernel/std_io.asm kernel/strings.asm
+	nasm -f bin -o kernel.bin kernel.asm
 
 clean:
 	rm -r build
