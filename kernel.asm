@@ -32,6 +32,7 @@ deny_access:
     jmp $
     
 %include 'kernel/std_io.asm'
+%include 'kernel/file_io.asm'
 %include 'kernel/strings.asm'
 
 password: db "monkeys", 0
@@ -39,4 +40,5 @@ password_message: db "Enter the password: ", 0
 access_granted: db "Access Granted!", 0
 access_denied: db "Access Denied...", 0
 
+file_input: times 32 db 0
 input_buffer: times 32 db 0
