@@ -46,14 +46,15 @@ get_length:
     mov bp, sp
 
     push bx          ; bx and dx will be modified, save them.
+    push dx
     
     mov bx, [bp + 4] ; Address of first char
     mov ax, 0        ; Length counter
     
     .loop:
-        mov dx, [bx]
+        mov dl, [bx]
         
-        cmp dx, 0    ; End of string?
+        cmp dl, 0    ; End of string?
         je .done
         
         inc ax       ; increment char count (length)
@@ -61,8 +62,8 @@ get_length:
         jmp .loop
         
     .done:
-        pop bx       ; restore bx and dx
-        pop dx
+        pop dx       ; restore bx and dx
+        pop bx
         
         mov sp, bp
         pop bp
