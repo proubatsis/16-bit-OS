@@ -10,7 +10,7 @@ main:
     
     ; Read the kernel off of the floppy disk
     mov ah, 0x02    ; Read disk function
-    mov al, 0x01    ; Read 1 sector
+    mov al, 0x02    ; Read 2 sectors
     mov ch, 0x00    ; Cylinder 0
     mov cl, 0x02    ; Sector 2 (After bootsector)
     mov dh, 0x00    ; Head 0

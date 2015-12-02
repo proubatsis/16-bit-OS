@@ -9,7 +9,7 @@ os.img: bootloader.bin kernel.bin file_table.bin
 	dd if=/dev/zero of=os.img bs=512 count=2880
 	dd if=bootloader.bin of=os.img conv=notrunc
 	dd if=kernel.bin of=os.img conv=notrunc bs=512 seek=1
-	dd if=file_table.bin of=os.img conv=notrunc bs=512 seek=2
+	dd if=file_table.bin of=os.img conv=notrunc bs=512 seek=3
 
 bootloader.bin: bootloader.asm
 	nasm -f bin -o bootloader.bin bootloader.asm
