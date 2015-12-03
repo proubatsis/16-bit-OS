@@ -11,15 +11,17 @@ main:
     push word file_table_sector
     call load_file_table
     
-    ;copy contents of filename to test_copy
-    push word 9
-    push test_copy
+    push file_buffer
     push word 0
-    push found_msg
-    push word 0
-    call memcpy
+    push filename
+    call open_file
     
-    push test_copy
+    ; add null terminator to string
+    mov bx, ax
+    add bx, file_buffer
+    mov [bx], word 0
+    
+    push file_buffer
     call print_string
     
     jmp $
@@ -31,13 +33,7 @@ main:
 
 welcome_message db "Welcome to my OS!", 0x0D, 0x0A, 0x00
 
-no_file_msg db "File not found!", 0x0D, 0x0A, 0x00
-found_msg db "File Found!", 0x0D, 0x0A, 0x00
+filename db "third_file.txt"
+file_buffer: times 512 db 0
 
-file_input: times 32 db 0
-input_buffer: times 32 db 0
-
-filename db "stuff.bin", 0
-test_copy: times 32 db 0
-
-file_table_sector equ 3
+file_table_sector equ 4

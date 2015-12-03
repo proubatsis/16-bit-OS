@@ -97,3 +97,83 @@ lookup_file:
         pop bp
         ret
         
+        
+; open_file(char* filename, byte* dst_seg, byte* dst_off)
+; Open the file with the given filename and
+; store its contents in dst. Return the size of the file.
+; Return 0 if there was an error.
+; Assumes that memory.asm has already been imported.
+open_file:
+    push bp
+    mov bp, sp
+    sub sp, 2 ; One local variable
+    
+    ; lookup the filename
+    push word [bp + 4]
+    call lookup_file
+    
+    ; was the file not found?
+    cmp ax, 0
+    je .error
+    
+    mov bx, ax
+    
+    mov ah, 0
+    
+    ; sector count
+    mov al, [bx + 2]
+    push ax
+    
+    ; start sector
+    mov al, [bx + 1]
+    push ax
+    
+    ; destination offset
+    push word [bp + 8]
+    
+    ; destination segment
+    push word [bp + 6]
+    
+    ; read the disk
+    call read_floppy
+    
+    ; save the file size
+    mov dx, [bx + 5]
+    mov [bp - 2], dx
+    
+    ; file offset
+    mov ax, [bx + 3]
+    cmp ax, 0
+    je .done
+    
+    ; memory offset
+    add ax, [bp + 8]
+    
+    mov si, ax
+    mov di, [bp + 8]
+    
+    ; memcpy count is the size of the file
+    push word [bp - 2]
+    
+    ; destination
+    push di
+    push word [bp + 6]
+    
+    ; source
+    push si
+    push word [bp + 6]
+    
+    call memcpy
+    jmp .done
+    
+    .error:
+        mov ax, 0
+        mov [bp - 2], ax
+        
+    .done:
+        mov ax, [bp - 2]
+        
+        mov sp, bp
+        pop bp
+        ret
+        
