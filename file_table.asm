@@ -1,5 +1,5 @@
 [bits 16]
-[org 0x8A00]
+[org 0x8100]
 
 ; This table sits in the sector after the kernel on the floppy.
 ; It's used to lookup files on the floppy given the name of a file.
@@ -12,6 +12,15 @@
 ; word: offset -> how many bytes after the start of the sector the file is located
 ; word: size of the file in bytes
 ; byte: flags (read, write, execute) (00000100 or 0x04 = Read) (00000010 or 0x02 = Write) (00000001 or 0x01 = Execute)
+
+kernel:
+db "kernel.bin", 0
+dw file1
+db 2
+db 2
+dw 0
+dw 999
+db 0x05
 
 file1:
 db "test.txt", 0

@@ -8,25 +8,18 @@ main:
     mov bx, loading_msg
     call print_string
     
-    ; Read the kernel off of the floppy disk
-    mov ah, 0x02    ; Read disk function
-    mov al, 0x02    ; Read 2 sectors
-    mov ch, 0x00    ; Cylinder 0
-    mov cl, 0x02    ; Sector 2 (After bootsector)
-    mov dh, 0x00    ; Head 0
-    mov dl, 0x00    ; Drive 0 (First Floppy Disk)
+    ; Load the file table
+    push word file_table_sector
+    call load_file_table
     
-    ; Load kernel at address es:bx
-    mov bx, KERNEL_SEGMENT
-    mov es, bx
-    mov bx, KERNEL_OFFSET
+    ; Load kernel.bin from the floppy
+    push word KERNEL_OFFSET
+    push word KERNEL_SEGMENT
+    push kernel_filename
+    call open_file
     
-    ; Read from the floppy
-    int 0x13
-
-    ; Error checking    
-    cmp ah, 0
-    jne drive_read_error
+    cmp ax, 0
+    je drive_read_error
     
     ; Jump to the kernel
     jmp KERNEL_SEGMENT:KERNEL_OFFSET
@@ -52,13 +45,23 @@ print_string:
     .done:
         ret
         
+%include 'bootloader/memory.asm'
+%include 'bootloader/strings.asm'
+%include 'bootloader/file_io.asm'
+        
 ; Messages
 loading_msg db "Loading OS...", 0x0D, 0x0A, 0x00
 error_msg db "ERROR - Did not load OS successfully!", 0x00
 
 ; Address of where the kernel will be loaded
 KERNEL_SEGMENT equ 0x0000
-KERNEL_OFFSET equ 0x8100
+KERNEL_OFFSET equ 0x8400
+
+; The kernel's filename
+kernel_filename db "kernel.bin", 0
+
+; Sector of the floppy where the file system table is located
+file_table_sector equ 4
 
 ; Fill with zeroes and place the magic number (0xAA55) at the end
 times 510-($-$$) db 0
