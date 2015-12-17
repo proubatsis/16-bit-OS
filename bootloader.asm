@@ -2,7 +2,7 @@
 [org 0x7c00]
 
 main:
-    mov bp, 0x8000 ; Set up the stack
+    mov bp, 0xFFFF ; Set up the stack
     mov sp, bp
     
     mov bx, loading_msg

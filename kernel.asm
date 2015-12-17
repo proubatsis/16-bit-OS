@@ -2,7 +2,7 @@
 [org 0x8400]
 
 main:
-    mov bp, 0x8900
+    mov bp, 0xFFFF
     mov sp, bp
     
     push welcome_message
