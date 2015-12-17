@@ -61,7 +61,7 @@ KERNEL_OFFSET equ 0x8400
 kernel_filename db "kernel.bin", 0
 
 ; Sector of the floppy where the file system table is located
-file_table_sector equ 4
+file_table_sector equ 2
 
 ; Fill with zeroes and place the magic number (0xAA55) at the end
 times 510-($-$$) db 0

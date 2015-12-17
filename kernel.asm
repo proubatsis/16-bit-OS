@@ -30,7 +30,7 @@ main:
 
 welcome_message db "Welcome to my OS!", 0x0D, 0x0A, 0x00
 
-filename db "third_file.txt"
+filename db "file.txt"
 file_buffer: times 512 db 0
 
 
