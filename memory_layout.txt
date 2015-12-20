@@ -3,5 +3,5 @@ bootloader, 0x7c00, 512
 file_table, 0x8100, 512
 kernel, 0x8400, 512
 stack, 0xFFFF (Downwards), 2048
-
+malloc, 0x2000:0x0000, 65535
 
