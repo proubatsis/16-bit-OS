@@ -106,7 +106,11 @@ lookup_file:
 open_file:
     push bp
     mov bp, sp
-    sub sp, 2 ; One local variable
+    sub sp, 6 ; Three local variables
+    
+    ; bp - 2 -> file size
+    ; bp - 4 -> offset data returned from malloc
+    ; bp - 6 -> file data return from lookup_file
     
     ; lookup the filename
     push word [bp + 4]
@@ -116,8 +120,23 @@ open_file:
     cmp ax, 0
     je .error
     
+    ; Save file data
+    mov [bp - 6], ax
     mov bx, ax
     
+    ; Calculate how many bytes to allocate as a file buffer
+    mov ah, 0
+    mov al, byte [bx + 2]
+    mov dx, FLOPPY_SECTOR_SIZE
+    mul dx
+    
+    ; Allocate space to use as a file buffer
+    push ax
+    call malloc
+    mov si, ax
+    mov [bp - 4], ax
+    
+    mov bx, [bp - 6]
     mov ah, 0
     
     ; sector count
@@ -128,11 +147,11 @@ open_file:
     mov al, [bx + 1]
     push ax
     
-    ; destination offset
-    push word [bp + 8]
+    ; buffer offset
+    push word [si]
     
-    ; destination segment
-    push word [bp + 6]
+    ; buffer segment
+    push word malloc_segment
     
     ; read the disk
     call read_floppy
@@ -143,11 +162,10 @@ open_file:
     
     ; file offset
     mov ax, [bx + 3]
-    cmp ax, 0
-    je .done
     
     ; memory offset
-    add ax, [bp + 8]
+    mov bx, [bp - 4]
+    add ax, [bx]
     
     mov si, ax
     mov di, [bp + 8]
@@ -161,14 +179,19 @@ open_file:
     
     ; source
     push si
-    push word [bp + 6]
+    push word malloc_segment
     
     call memcpy
-    jmp .done
+    jmp .free_buffer
     
     .error:
         mov ax, 0
         mov [bp - 2], ax
+        jmp .done
+        
+    .free_buffer:
+        push word [bp - 4]
+        call free
         
     .done:
         mov ax, [bp - 2]
@@ -176,4 +199,6 @@ open_file:
         mov sp, bp
         pop bp
         ret
+        
+FLOPPY_SECTOR_SIZE equ 512
         
